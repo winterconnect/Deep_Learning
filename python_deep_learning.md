@@ -211,6 +211,30 @@
 
 
 
+- Tensor
+
+  - Multi Dimensional Matrix
+
+    def Machine(x1, x2,
+
+    ​						w1_11, w1_12, b1_1,
+
+    ​						w1_21, w1_22, b1_2,
+
+    ​						w2_11, w2_12, b2_1) :
+
+    ​	y1 = sigmoid(x1 * w1_11 + x2 * w1_12 + b1_1)
+
+    
+
+
+
+
+
+파라미터 개수가 증가하면 학습시간이 늘어난다
+
+
+
 #### Linear Model
 
 - 지금까지는 하나의 모델을 잘 만들려고 노력한 것
@@ -332,7 +356,15 @@
 
 
 
+#### ML/DL Modeling 
 
+1. Data Set Size가 클수록 좋다: X(input)
+2. Parameter(W, b)의 개수가 많을수록 좋다
+
+
+
+- 모델 학습성능에 부정적 영향. 왜?
+- 학습의 원리가 Gradient Descent
 
 
 
