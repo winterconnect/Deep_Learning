@@ -1094,6 +1094,70 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
+## 5. Deep Neural Network
+
+> 모델을 만드는 것은 어렵지 않으나, 모델에 데이터를 넣기 위한 전처리가 중요하다
+
+
+
+### 1) Keras Modeling
+
+
+
+#### Binary Classification (p.104)
+
+- IMDB(Internet Movie Database)
+
+  - 영화에 대한 5만개의 양극화된 감상평 제공
+  - 감상평에 포함된 단어를 기준으로 긍정과 부정으로 이진 분류
+  - train 25000, test 25000
+
+- 문제점: 리뷰글의 길이가 대부분 다르다 (비정형데이터), 어떻게 input으로 넣는가?
+
+- 어떻게 똑같은 형태의 input으로 넣을 것인가?
+
+  ex) 첫번째 리뷰 218개 단어(문장길이) [1, 14, 22, 16, 43, 530, 973, ...]
+
+  ​      두번째 리뷰 181개 단어 [ ..... ]
+
+  - 단어의 종류는 10000가지를 넘지 않음(10000등까지만 뽑았으므로)
+  - 길이를 모두 10000으로 맞추고, 단어가 있는 곳에만 체크하는 식으로 데이터 변형
+  - 길이가 10000인 25000개의 데이터 생성
+
+
+
+#### Categorical Classification (p.56)
+
+- Handwritten Digits in the M(Mixed)-NIST Database
+- 문제점: input이 2d
+- 2d를 하나로 길게 펴주는 작업 필요 ex) (5, 5) - (25,)
+- 데이터의 특징을 가지고 있을 것이다
+
+
+
+- 이미지 데이터는 보통 Standardization이 아니라 Normalization을 해준다. 왜?
+  - x - min / max - min
+  - min은 보통 0, max는 255이므로 x / 255가 된다
+- accuracy: 받아들일 수 있는가 없는가? 
+-  acceptance criteria가 reasonable해야한다
+- 이전에 사람이 분류했을 때 정확도는 얼마였는가?
+  - 사람의 오류가 3%였다면?
+  - 사람의 오류는 1.5%라면?
+  - 쓸까 안쓸까? 기계를 쓰고 인건비를 줄이는 것과, 기계 오류에 따른 손해를 배상해주는 것?
+- 얼마나 좋게 만들어야 하나? 기준을 잡고 들어가야 한다
+
+
+
+#### Regression Analysis
+
+- Boston Housing Price Dataset
+
+
+
+
+
+
+
 
 
 
