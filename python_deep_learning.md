@@ -389,6 +389,8 @@ ex) Fully-connected(FC) 연결망 (Dense)
 > 앞에서 오는 것은 Forwardpropagation(순전파)라고 한다
 >
 > Chain rule 과 역전파 알고리즘을 통해 미분값을 얻게 됨
+>
+> 오차 역전파와 Chain Rule을 합치면 빠르게 경사값을 획득할 수 있게 된다
 
 
 
@@ -711,7 +713,7 @@ forward propagation 에서 구한 값과 오차를 뒤로 보내주면
 
 > 노란책 p.83
 >
-> 확률적 경사하강
+> 확률적 경사하강(경사하강을 좀 더 발전시켜보자)
 >
 > 통계적 개념: 일부 데이터로 전체 데이터를 추정
 
@@ -796,6 +798,301 @@ forward propagation 에서 구한 값과 오차를 뒤로 보내주면
 최적화 기법은 아직도 연구중이다
 
 ---
+
+
+
+
+
+
+
+우리가 이야기하는 딥러닝 모델이라는 것은,
+
+파라미터들의 집합이다 A set of parameters
+
+파라미터들이란? 노드 간 연결되는 선
+
+함수는 정해져있다  y = A(WX+b)
+
+사실은 모델을 저장하는 것은, 모델 구조와 파라미터 값만 가지고 있으면 된다 (텍스트 정보임)
+
+파라미터 정보를 저장해뒀다가 그 숫자를 다시 사용하는 것
+
+
+
+양자 컴퓨팅이 상용화되면 딥러닝의 발전은 매우 빨라질 것!
+
+
+
+
+
+
+
+## 4.  Keras TensorFlow
+
+
+
+
+
+### 1) TensorFlow
+
+- 데이터 흐름 프로그래밍을 위한 오픈소스 소프트웨어 라이브러리
+- Neural Network같은 Machine Learning 프로그램에 활용
+- 구글 브레인 팀에 의해 개발, 2015년 아파치 2.0 오픈소스 라이센스로 공개
+- 주요 특징
+  - Keras API를 활용하여 손쉬운 모델 빌드
+  - 플랫폼 관계 없이 모델을 학습시키고 배포 가능
+  - 빠른 프로토타입 제작과 디버깅 구현
+
+
+
+딥러닝 모델링이 매우 쉬워지며, 
+
+2.x 버전이 되면서 많은 기능이 추가되고 있다
+
+
+
+### 2) Keras
+
+> Keras: 그리스어로 "뿔"이란 뜻
+>
+> - 실제 케라스가 모델링하는 것이 아니라 TensorFlow로 모델링
+> - 꿈을 관장하는 신이 상아로 만들어진 문으로 꿈을 내보내면, 꿈이 이루어지지 않음
+> - 뿔로 만들어진 문으로 꿈을 내보내면 꿈이 이루어짐(예지몽)
+> - 케라스를 통해 예지몽과 같은 모델을 만들겠다는 철학적인 의미!
+>
+> Keras 자체로는 아무것도 할 수 없다
+>
+> TensorFlow와 대화하는 것을 보다 쉽게 해주기 위한 인터페이스라고 생각하자
+>
+> R-R Studio, Python-Jupyter Notebook의 관계와 비슷
+
+
+
+- Python기반의 Deep Learning Framework(library)
+- 내부적으로는 TensorFlow, Theano, CNTK등의 Deep Learning 전용 엔진 구동
+- 누구나 쉽게 Deep Learning Model 생성 가능
+- Keras 사용자는 복잡한 내부엔진에 대하여 알지 못해도 됨
+- 직관적인 API를 통하여 MLP, CNN, RNN등의 모델 생성 가능
+- 다중 입력 및 다중 출력 구성 가능
+- TensorFlow 1.14버전부터 공식 코어 API로 추가
+
+
+
+- 사용자 중심의 1) 상위 레벨 인터페이스 제공
+  - 1) 상위레벨: 유저와 가까움(고급언어) / 하위레벨: 하드웨어(컴퓨터와 가까움)(저급언어)
+  - 하위 레벨 계산은 일반적으로 TensorFlow 사용
+  - 동일한 코드를 CPU 및 다양한 GPU에서 실행 가능
+
+
+
+#### Keras with GPU
+
+> 박사 8명 있는 것보다 초등학생 2천명 있는 게 낫다
+
+- CPU(Central Processing Unit): 복잡한 연산 수행에 적합
+  - 프로세서: 8코어(CPU가 8개)
+- GPU(Graphic Processing unit): 단순한 **대량 연산**에 적합
+  - Deep Learning Matrix 연산에 활용
+  - NVDIA 기준 코어가 2944개, 최근은 4천개 대 코어가 등장
+
+
+
+### 3) Tensor
+
+> 다차원 행렬
+>
+> 텐서라 부르는 다차원 넘파이 행렬. 핵심적으로 텐서는 숫자 데이터를 위한 컨테이너(container)입니다. 항상 수치형 데이터를 다루므로 숫자(float)를 위한 컨테이너입니다.(노란책 p.61)
+
+
+
+- Rank1 Tensor - 벡터
+
+- Rank2 Tensor - 행렬(Matrix)
+
+- Rank3 Tensor
+
+- Tensor는 텐서플로로 만들어도 되고, numpy로 구현해도 상관없다(casting 필요)
+
+
+
+- Neural Network 학습의 기본 데이터 단위
+  - 숫자(Numeric) 데이터를 담기 위한 컨테이너
+  - 임의의 차원(Dimension) 또는 축(Rank)을 가짐
+
+
+
+- Type
+
+| Rank | Type            | Example                                                     |
+| ---- | --------------- | ----------------------------------------------------------- |
+| 0    | Scalar          | 0                                                           |
+| 1    | Vector          | [0, 1]                                                      |
+| 2    | Matrix          | [[0, 1] , [1, 0]]                                           |
+| 3    | 3 Tensor(Array) | [[[0, 0] , [0, 0]] , [][1, 1] , [1, 1]] , [[2, 2], [2, 2]]] |
+| N    | N Tensor        |                                                             |
+
+
+
+
+
+#### Tensor in NLP(Natural Language Processing)
+
+> 사람이 이해하는 언어를 숫자로 바꿔주어야 컴퓨터가 이해할 수 있다
+
+- 문장과 단어를 숫자 벡터로 매핑
+
+  ex) 하얀 고양이, 하얀 강아지, 하얀 비둘기
+
+  - 단어 단위로(영어라면 캐릭터 단위로) 나눠서 처리, 중복되지 않게 단어 단위로 숫자
+
+- Unique Word Dictionary(Rank1)
+
+  | Word   | Index | One-Hot Encoding Vector |
+  | ------ | ----- | ----------------------- |
+  | 하얀   | 0     | [1, 0, 0, 0]            |
+  | 고양이 | 1     | [0, 1, 0, 0]            |
+  | 강아지 | 2     | [0, 0, 1, 0]            |
+  | 비둘기 | 3     | [0, 0, 0, 1]            |
+
+  - ex) 하얀 고양이, 하얀 강아지, 하얀 비둘기(Rank2)
+
+    - 하얀 고양이: [[1, 0, 0, 0] , [0, 1, 0, 0]]
+    - 하얀 강아지: [[1, 0, 0, 0,] , [0, 0, 1, 0]]
+
+  - mini-batch Input(Rank3): 문장으로 넣고싶다면 보다 복잡한 텐서로 입력하게 된다
+
+    - 하얀 고양이, 하얀 강아지, 하얀 비둘기
+
+      [[[1, 0, 0, 0] , [0, 1, 0, 0]] , [[1, 0, 0, 0,] , [0, 0, 1, 0]] , [[1, 0, 0, 0] , [0, 0, 0, 1]]]
+
+    - shape로 모양을 확인하면 (3, 2, 4)
+
+  - 어떻게 묶느냐에 따라 다양한 형태의 Tensor로 구현할 수 있다
+
+
+
+#### Tensor in Grayscale Image(흑백이미지)
+
+- 색을 표현하기 위해 0~255 (하얀색 255, 검은색 0)
+
+- 이미지는 자연어보다 좀 편하다(이미지는 이미 숫자들의 컨테이너, Rank2 Tensor)
+- 이미지를 여러개씩 집어넣어 처리(Rank 3 Tensor)
+  - (Number of Images, Rows, Columns)
+  - (3, 5, 5) : "5*5 이미지 3장이 들어갈거야!"
+
+
+
+#### Tensor in RGB Color Image
+
+> 노란책 p.68
+
+- (Number of Images, Rows, Columns, RGB Channel)
+- (3, 5, 5, 3)
+- 컬러이미지는 기본적으로 3차원의 구조를 가진다
+  - R
+  - G
+  - B
+  - 세개가 묶여 하나로 보이는 것
+  - R 255, G 0, B 0 이면 빨간색, 세개 모두 255면 하얀색, 0이면 검은색
+  - #을 붙여 16진수로 표현함
+- 디지털의 모든 색은 RGB 숫자로 표현되고 있다 (Rank 3 Tensor로 저장하고 있음)
+
+- 처리하는 픽셀의 개수가 몇개냐에 따라서 1000만 화소, 2000만 화소 (들어있는 숫자의 집합) 등으로 표현하는 것
+- 4K(4096 * 4096)
+
+
+
+#### Tensor in RGB Color Video
+
+> 컬러이미지는 컬러이미지의 집합
+
+- 영상은 "프레임"의 개념이 들어감(초당 몇장의 그림이 흘러갈 것이냐?), 많을수록 자연스러워짐
+- (3, 5, 600, 800, 3)
+- (Video Frames, Number of Images, Rows, Columns, RGB Channel)
+- 프레임당 들어있는 이미지의 수
+- 프레임을 한번에 여러개 처리하고 싶다면 5 Rank Tensor가 된다
+
+
+
+Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다룰 모델에 맞게 넣어줘야 한다
+
+
+
+
+
+### 4) Keras Modeling
+
+> Tensor(실수형 행렬)로 만들어져 있어야 한다 (Preprocessing)
+>
+> Modeling 전에 데이터 전처리 & EDA 작업이 필수 (실제 가장 많은 시간이 걸린다)
+>
+> 목표달성시까지 반복(모델구조 및 Hyperparameter 변경)
+>
+> Data Collection - Data Preprocessing - Modeling
+
+
+
+#### (1) Define(모델 신경망 구조 정의)
+
+> 모양만 만듦
+
+- Sequential Model
+- Layers/Units(=Node)
+- Input Shape
+- Activations: sigmoid? tanh? ReLU?
+
+
+
+#### (2) Compile(모델 학습방법 설정)
+
+> 어떤 문제를 풀건가? (예측/분류)
+
+- Loss: 예측(MSE), 분류(Binary CE / Categorical CE)
+- Optimizer: GD에 대한 부분
+- Metrics: 예측(MSE), 분류(Accruacy, Preicision, Recall)
+
+
+
+#### (3) Fit(모델 학습 수행)
+
+> 실제 학습이 수행
+>
+> Parameter Update
+>
+> 구조에서 정의된 파라미터가 실제로 학습됨
+
+- Train Data
+- Epochs: 반복횟수
+- Batch Size
+- Validation Data
+
+
+
+#### (4) Evaluate(모델 평가)
+
+> ML의 validation 단계 (사용에 적합한가?)
+>
+> 아니라면 앞단계로 돌아가며 원하는 성능이 나올 때까지 반복
+
+- Plot: 시각적으로 봄
+- Evaluate(함수로 볼 수도 있음)
+
+
+
+#### (5) Predict(모델 적용)
+
+> 개발단계(Development)에서 Live Environment로 Model Deployment하는 단계
+>
+> (실제로 모델이 사용되는 단계, 배포단계)
+>
+> "Go Live 한다" 고 표현 (실무용어)
+
+- Probability
+- Classes
+
+
+
+
 
 
 
