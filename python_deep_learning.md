@@ -831,8 +831,6 @@ forward propagation 에서 구한 값과 오차를 뒤로 보내주면
 
 
 
-
-
 ### 1) TensorFlow
 
 - 데이터 흐름 프로그래밍을 위한 오픈소스 소프트웨어 라이브러리
@@ -957,7 +955,7 @@ forward propagation 에서 구한 값과 오차를 뒤로 보내주면
   - ex) 하얀 고양이, 하얀 강아지, 하얀 비둘기(Rank2)
 
     - 하얀 고양이: [[1, 0, 0, 0] , [0, 1, 0, 0]]
-    - 하얀 강아지: [[1, 0, 0, 0,] , [0, 0, 1, 0]]
+    - 하얀 강아지: [[1, 0, 0, 0] , [0, 0, 1, 0]]
 
   - mini-batch Input(Rank3): 문장으로 넣고싶다면 보다 복잡한 텐서로 입력하게 된다
 
@@ -1046,6 +1044,8 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 #### (2) Compile(모델 학습방법 설정)
 
 > 어떤 문제를 풀건가? (예측/분류)
+>
+> Loss, Optimizaer는 계속 새로운 것이 업데이트되고 있다
 
 - Loss: 예측(MSE), 분류(Binary CE / Categorical CE)
 - Optimizer: GD에 대한 부분
@@ -1100,11 +1100,9 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
-### 1) Keras Modeling
+### 1) Binary Classification (p.104)
 
-
-
-#### Binary Classification (p.104)
+> 데이터 전처리에 대한 고민
 
 - IMDB(Internet Movie Database)
 
@@ -1126,7 +1124,9 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
-#### Categorical Classification (p.56)
+### 2) Categorical Classification (p.56)
+
+> 데이터 shape 변환에 대한 고민
 
 - Handwritten Digits in the M(Mixed)-NIST Database
 - 문제점: input이 2d
@@ -1148,9 +1148,168 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
-#### Regression Analysis
+
+강화학습으로 가면, 모든 아날로그를 디지털화 해야한다 (CPS, Cyber Physical System)
+디지털 세계로부터 무언가를 학습하게 됨
+
+
+
+
+#### Overfitting Issues
+
+> 노란책 p.151
+
+- Train 데이터에만 최적화된 상태
+- 데이터가 적을 때: 데이터의 숫자에 비해 Model Capacity가 높을 때
+- 파라미터의 수가 많을 때
+- Capacity를 높게 잡고 낮추는 방식이 일반적인 접근 방식
+
+
+
+##### Train Loss vs. Validation Loss
+
+1. 더 많은 Train Data (현실적으로 어려운 경우가 많다)
+2. Model Capacity가 높아서
+   - 층을 줄이거나,
+   - Node를 줄이거나
+3. L2 Regularization
+4. Dropout
+5. Batch Normalization
+
+
+
+##### (1) Model Capacity 감소 전략
+
+- Hidden Layer 및 Node 개수 줄이기
+
+
+
+##### (2) L2 Regularization(규제화)
+
+- Model이 Train Data에 너무 학습되지 않도록 방해
+- 가중치의 제곱에 비례하는 노이즈를 Cost Function에 추가(가중치 감쇠: Weigh Decay)
+  - L1인 경우 가중치의 절대값
+
+
+
+##### (3) Dropout
+
+> 기존 머신러닝에는 없던 개념
+>
+> 경험적의 산물(실제 해봤더니 좋아지더라)
+
+- 훈련과정에서 네트워크의 일부 출력 특성의 연결을 무작위로 제외시킴
+- dropout되는 순간 capacity가 떨어지는 것 (weight의 개수가 줄어듦)
+
+
+
+##### (4) Batch Normalization
+> 모델의 성능을 향상시키기 위해서 최근 가장 많이 적용되는 것은, Batch Normalization이다 
+
+- Scaling의 기법: Normalization, Standardization
+  - Normalization: Scaling 중 Min-Max Scaler
+  - Standardization과 Normalization을 합쳐 Normalization이라고 하기도 한다
+  - Standardication: 표준화란 평균이 0, 분산이 1인 정규분포의 형태로 배치시키는 것
+  - 용어는 Batch Normalization이지만, 내부적으로는 표준화가 동작한다
+- Batch Normalization을 하면 Overfitting 외에도 긍정적인 효과가 나타난다(학습이 더 잘되는 등)
+
+- 정규분포인 경우 예측이든 분류든 더 잘 이루어진다
+
+
+
+
+- Input Data(X)가 연속형 데이터인 경우, **Activation 함수로 들어가기 전**, Batch Normalization을 처리해서 전달
+
+  - 활성화 함수의 입력값을 정규화 과정을 수행하여 전달
+  - input이 들어가면 노드에서 wx + b 처리되고, 활성화 함수를 씌워 다음 노드로 넘어간다
+  - 정규분포 형태로 들어가도, wx + b를 거치면 정규분포의 형태로 나오지 않는다
+    (한쪽으로 치우치거나 알수없는 분포로 나올 수 있다)
+
+  - 나온 output을 정규분포 형태로 만들어서 활성화함수에 전달한다
+- layer를 지날 때마다 분포가 변하므로, 다시 정규화한다
+
+
+
+
+- Gradient Vanishing 문제 해결 및 더 큰 Learning Rate을 사용 가능(학습이 빨라진다)
+- 이론적 이유: Sigmoid를 기준으로 설명
+  - Sigmoid를 나오면 기본적으로 0, 1 값이 나옴
+  - Activation에 들어가는 분포가 한쪽으로 치우쳐져서 들어간다면, 0에 가까운 값으로 떨어지는 것을 줄여준다
+  - 한쪽으로 기운 데이터라면 0에 가까운 값이 나올 가능성이 크지만, 정규분포라면 그보다 큰 값이 나올 확률이 더 커진다
+- capacity를 줄이거나, noise를 키우는 것이 아니라 중간값들이 극단값으로 가지 않도록 조정해주는 것
+
+
+- Batch Normalization에서 Parameter가 들어간다. 
+  - Parameter의 의미: 정규분포 형태로 만들기 위해 평균, 분산이 필요. 어떤 평균과 분산이 최적일지 학습시키기 위한 Parameter
+
+
+
+
+
+
+### 3) Regression Analysis
+
+> 빨간책 p.91, 
+>
+> 노란책 p.165 (테이블 참조)
+>
+> 예측모델은 딥러닝을 잘 사용하지 않는다(머신러닝으로 충분히 가능)
 
 - Boston Housing Price Dataset
+- 1970년대 중반 보스턴 교외 지역의 주택 평균가격 예측
+- 정형화된 데이터가 주로 쓰이고, 머신러닝으로도 보통 가능하다
+
+
+
+- 학습 횟수(epoch)도 Model Capacity에 영향을 준다
+- 학습을 많이 했더니 오히려 성능이 안좋아진다 (overfitting 발생)
+- 분류문제와 달리 예측모델인 경우에는 MAE 자체가 적은 것이 성능이 좋은 모델이라고 할 수 있다
+- 500번이나 epoch를 돌 것 없이, 80-90번만 돌면 parameter가 최적이 된다
+- overfitting을 줄이기 위해서 학습을 적게 시키면 된다
+- 그런데 만약 1000번을 학습하면, 올라갈까 내려갈까? 연구결과 일반적으로 내려가지 않는다
+  - 횡보하거나 좀 더 올라가는 것이 일반적
+- 만약 오차가 계속 줄어들고 있는 상태라면? 학습을 더 시켜야 한다
+- 더 이상 좋아질 것 같지 않으면 학습을 그만시키면 좋지 않을까? Early Stopping, model checkpoint, callback
+
+
+
+#### Early Stopping
+
+> 노란책 p.331
+
+- Keras Callback의 두가지 기능을 이용해 가능함
+  - EarlyStopping()
+  - ModelCheckpoint() : 최소값이 나타날 때마다 모델을 저장
+
+
+
+
+
+### ***Hyperparameter Optimization***
+
+>  DNN은 Hyperparameter 튜닝을 어떻게 하느냐에 따라 달려있다
+>
+>  기억하자! 이것이 나의 능력
+
+- Layer & Node & Input_shape
+- Activation Function
+- Loss & Optimizer
+- Epoch & Batch_size
+- Kernel_regularizer & Dropout
+- K-fold Cross Validation
+- Train vs. Validation Rate & Normalization & Standardization
+
+
+
+
+
+### DNN의 한계점
+
+이미지처리: Rank3 에서 Rank1 Tensor로 변환하는 순간, 개체가 가지고 있는 위치정보가 소멸됨
+
+2차원으로 변환하면서 위치정보까지 손상되지 않아야 다음단계 일을 할 수 있다
+
+Deep Learning 모델은 1차원만 받을 수 있고, Input은 2차원인데 어떻게 해야할까?
 
 
 
@@ -1158,6 +1317,91 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
+## 6. Convolutional Neural Network
+
+> 이미지를 이미지 그대로 처리하고 싶다
+>
+> 이미지 특징을 뽑아내면서 위치정보가 손상되지 않게 하고싶다
+>
+> CNN + DNN
+>
+> "Convolutional"이 핵심
+>
+> 이렇게 연산하므로써 얻어지는 이점은 무엇인가?
+
+
+
+### 1) 합성곱(Convolutional) 신경망 알고리즘
+
+- 이미지 처리 작업에 주로 사용
+  - 반드시 이미지처리에만 사용하는 것은 아니다
+- **합성곱 연산**을 이용하여 **가중치의 수를 줄이고 연산량을 감소**
+  - Model Capacity를 떨어뜨리는데 어떻게 더 잘되나?
+- 여러개의 **Filter(Parameter Matrix)**로 이미지의 특징(Feature Map)을 추출
+  - 하나가 아니라 여러개의 필터를 쓴다
+  - 필터에 적용되는 하이퍼파라미터: 필터의 개수, 필터의 사이즈
+  - 우리가 학습시킬 대상이 Filter이고 Parameter가 matrix 형태로 생김
+  - feature extraction을 통해 feature map을 만듦
+  - 기존에는 파라미터들이 
+- Local connectivity & Paramter Sharing
+  - 하나의 필터(가중치)로 input 전체 적용
+
+
+
+### 2) CNN에 추가된 Hyperparameter
+
+#### (1) Filter
+
+> CNN에서 가장 중요한 Hyperparameter
+>
+> 필터가 파라미터이다! (학습하면서 계속 바뀐다)
+>
+> 크기, 개수
+
+이미지 위에 필터를 올려놓고,
+
+- Filter를 Input_Data에 적용하여 특징 맵(Feature Map) 생성
+- Filter의 값은 Input_Data의 특징(Feature)을 학습하는 가중치 행렬
+- 동일한 Filter로 Input_Data전체에 합성곱 연산(Convolutional) 적용
+  - input(image) - filter(convolutional) - output(feature map)
+  - 이미지의 특징을 여전히 가지고 있을 것(이미지의 특징이 추상화됨)
+  - 위치정보가 망가지지 않음
+- 이미지가 한번 filter를 거치면 이미지가 아니라 feature map이라고 부른다
+- convolutional layer를 몇번 하는 게 좋은가? 해봐야 안다
+
+
+
+ex) 120 * 160 이미지
+
+- filter = 5*5
+- 116 * 156 * 12가 됨. 의미? 120 * 160 이미지를 5*5 필터 12개로 처리함
+
+- 풀링을 거치면 사이즈가 절반으로 줄어듦 58 * 78
+- 2 * 2 맥스풀링: 2 *2 에서 가장 큰 숫자만 뽑아냄
+
+
+
+#### (2) Stride
+
+> 통상적으로 별로 건드리지 않는다. 한칸씩 움직이는게 일반적으로 더 좋더라.
+
+- Filter를 적용하기 위해 이동하는 위치의 간격
+- Stride값이 커지면 출력 특징 맵(Feature Map)의 크기가 감소
+
+
+
+#### (3) Pooling
+
+- 어떤 이미지를 분간할 때, 인간도 사실 모든 픽셀을 보지 않는다. 가장 큰 특징을 봄
+- 일반적으로 Maxpooling 사용: 제일 큰 값만 추출
+- Average Pooling: 데이터 특징 소실을 우려. 평균값
+- 그러나 성능이 가장 좋은 것은 Maxpooling 임이 경험적으로 밝혀짐. 주로 Maxpooling 사용
+
+- 일반적으로 convolutional layer와 maxpooling layer를 섞어서 쓰게 된다
+
+- cnn만으로는 최종적인 분류, 예측문제를 해결할 수 없어서 FC(Fully-connected) DNN Layer를 붙여줘야 한다
+
+  (결국은 일자로 펴준다)
 
 
 
@@ -1165,6 +1409,35 @@ Tensor는 정해져있는 것이 아니라, 어떻게 처리할지 우리가 다
 
 
 
+#### (4) Padding
+
+
+
+
+
+
+
+## 7. Recurrent Neural Network
+
+
+
+## 8. Long Short-Term Memory
+
+
+
+## 9. Generative Adversarial Network
+
+> GAN의 컨셉을 이해하면 자연어처리, 추천시스템에 대해 더 이해할 수 있다
+
+
+
+
+
+AE
+
+VAE 
+
+를 거쳐 GAN으로 이어진다
 
 
 
