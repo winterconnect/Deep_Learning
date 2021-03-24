@@ -1505,7 +1505,9 @@ cnn에 maxpooling이 없는 경우도 많다
 
 
 
-### Channel
+### 3) CNN의 구성
+
+#### (1) Channel
 
 - n차원 데이터: n차원 Filter를 사용하여 합성곱 연산 수행
 - Input_Data의 채널 수와 Filter의 채널 수는 같아야 함
@@ -1514,7 +1516,7 @@ cnn에 maxpooling이 없는 경우도 많다
 
 
 
-### Classification
+#### (2) Classification
 
 - CNN의 마지막 단계에 분류를 위한 필터를 적용(Sigmoid or Softmax)
 
@@ -1532,6 +1534,8 @@ cnn에 maxpooling이 없는 경우도 많다
 - 방법2: 이미지가 정렬된 대로 labels.txt 파일을 만들어 labeling 해줌 ex) 개구리 트럭 트럭 개구리
 - 강아지의 종을 구분한다면 모두 다른 디렉토리에 분류
 - 일반적으로 데이터를 수집할 때 디렉토리를 따로 설정하는 방법을 쓴다
+
+
 
 
 
@@ -1562,7 +1566,7 @@ model.evaluate_generator: test_generator
 
 
 
-### Overfitting Issues
+### 4) Overfitting Issues
 
 더 많은 데이터를 사용하는 것 같은 기법!
 
@@ -1570,32 +1574,135 @@ model.evaluate_generator: test_generator
 
 #### Image Augmentation(이미지 증강)
 
+> 노란책 p.193
+>
+> 빨간책 p.134, 노란책 p.312
+
 - Overfitting을 회피하기 위해 더 많은 데이터를 생성하여 사용
 - 원본이미지를 여러가지 다른 형태로 만듦
 
 
 
-노란책 p.193
-
-
-
-빨간책 p.134
-
-노란책 p.312
-
-
-
-케라스 함수형 API
-
-함수형모델로 auto encoder 구현하는 것 보게될것 
-
-
-
-함수로 객체를 만들어감
 
 
 
 
+
+
+- 케라스 함수형 API: 함수형모델로 auto encoder 구현하는 것 보게될것 (함수로 객체를 만들어감)
+
+
+
+
+
+
+
+### 5) 전이학습(Transfer Learning)
+
+> Learning한 것을 전달받음
+>
+> 이미 학습된 파라미터를 전달받겠다
+
+- 학습되었다는 것은? 우리가 넣은 데이터의 특징을 확인할 수 있다는 의미
+- 1000가지 이미지를 분류하도록 모델을 학습시켜두었다면, 1000가지 이미지를 분류하는 파라미터(필터) 들은 그 중 일부인 강아지와 고양이를 처리할 수도 있을 것이다
+
+
+
+#### ImageNet Large Scale Visual Challenge
+
+- 1000가지의 이미지 클래스를 분류하는 문제
+
+- 2012년에 딥러닝 CNN을 활용(AlexNet) 하면서 Error rate 이 10퍼센트 이상 떨어짐
+- 인간의 에러율 5% 정도. 사람보다 더 정확한 모델들이 생겨남
+- 이미 학습된 것을 전달받아 쓰겠다는 것
+
+- 학습된 파라미터의 집합: 모델
+- 사전학습된 Parameter(Model)를 가져와서 적용하자!
+
+
+
+##### 고려해야 할 사항
+
+1. Input shape을 맞춰주면 됨
+
+2. DNN(Classifcation Layer) 재사용이 불가능할 가능성이 큼
+
+   ex) 원본은 1000개 분류인데, 나는 2개만 혹은 10개만
+
+
+
+- 굉장히 많은 모델들이 이미 학습되어있다
+
+
+
+#### CNN의 종류(중요한 모델들)
+
+##### (1) LeNet
+
+- 1) 얀 르쿤(Yann Lecun)연구팀에서 개발한 최초의 CNN 구조
+  - 1) 인공지능 4대천왕 중 한명
+- 합성곱(Convolution), Subsampling(Max Pooling), Full Connection(Classification)
+- 
+
+##### (2) AlexNet
+
+- 2012 ILSVC 우승(Alex Khrizevsky)
+- LeNet과 유사한 구조이며, 2개의 GPU로 병렬연산 수행
+
+
+
+##### (3) GooLeNet(InceptionNet)
+
+- 2014 ILSVC 우승(Google)
+- 가로 세로 모두 convolution 과 pooling을 깊이 쌓음
+- Inception module: 총 9개의 가로방향으로 깊은 구조(inception... 더 깊이.....)
+
+
+
+##### (4) ResNet
+
+- Res: Residual 
+- 맥스풀링 없이 convolutional layer만 쌓음
+- 2015 ILSVC 대회 우승(Microsoft 북경연구소)
+- GoogleNet(22 layers)의 약 7배인 152 layers로 구성
+- Layer가 깊어져 학습이 안되는 문제(경사하강)를 Skip Connection을 통해 해결
+
+
+
+##### (5) VGGNet
+
+- 2014 ILSVC 대회 준우승(University of Oxford - Visual Geometry Group)
+- layer의 개수에 따라 VGG16과 VGG19두가지 모델로 구성
+
+
+
+
+
+#### Feature Extraction
+
+- 사전에 학습된 모델을 사용하여 특성 추출(Feature Extraction)
+  - Feature Extraction: Parameter 재사용
+  - Classification: Parameter학습
+
+
+
+#### Fine Tuning
+
+- 시작하는 레이어에서는 가까운 것만 학습하지만, convolutional이 일어날수록 더 많은 영역을 보게 된다
+
+- VGG는 1000개를 구분하지만, 앞쪽은 비슷비슷할 것
+- 뒤로 갈수록 특징이 구체적으로 발현된다
+
+- 처음, 중간은 기존에 학습한 걸 쓰고(공통속성)(freeze), 
+- 마지막 레이어를 우리 데이터에 맞게 재학습시킴(Unfreeze)
+
+- 일반적으로 feature extraction하는 것보다 더 잘된다
+
+
+
+#### Visualizing Intermediate Activations
+
+> 노란책 p. 225
 
 
 
