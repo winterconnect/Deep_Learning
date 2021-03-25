@@ -1712,10 +1712,6 @@ model.evaluate_generator: test_generator
 
 > 노란책 p. 225
 
-
-
-
-
 - CNN으로 우리가 보는 것은 Image Processing (다른 분야에 써도 상관없지만)
 - Transfer
   1. Layer 구조만 가져와서 파라미터는 새로 학습
@@ -1733,7 +1729,6 @@ model.evaluate_generator: test_generator
 
 - 자연어: 이미지처럼 간단하게 transfer 할 수 없다
 - 갖다쓰는 게 안된다!
-- 
 
 
 
@@ -1745,7 +1740,6 @@ model.evaluate_generator: test_generator
 - 가상세계에서 데이터를 생성해가면서 학습한다
 - CPS가 구성되어야 가능하다
 - 이것이 digital transformation의 끝판왕...
-- 
 
 
 
@@ -1773,14 +1767,41 @@ model.evaluate_generator: test_generator
 
 #### (1) Object Detection
 
-- R-CNN : Region CNN
-- YOLO
+
+
+##### R-CNN : Region CNN
+
+##### YOLO(You Only Look Once)
+
+- Bounding Box Coordination(조정)
+  - Grid 별로 분류를 하게 됨
+  - Grid별로 같은 객체라고 판단하면, 확장시켜나가는 형태로 학습함
+  - YOLO(CNN)을 통해 나온 긴 모양의 output을  prediction tensor라고 한다
+  - prediction tensor에 세가지 속성이 들어간다
+    - 1: Bounding Box의 정보
+    - 2: Bounding Box에 대한 신뢰정보(0~1 사이), 객체가 아닌 것은 모두 background
+    - 3: 클래스 분류 확률값
+- YOLO는 prediction tensor를 사용해서 한번만에 이것을 처리함
+
+
+
+
+
+
+
+- 객체인식의 평가기준 (Object Detection Metric) 2가지
+  1. mAP(mean Average Precision): 정확도
+  2. FPS(Frame Per Seconds): 신속성(속도)
 
 
 
 #### (2) Image Segmentation
 
+> 빨간책 p.378, 386
 
+- 이미지의 픽셀단위로 구분하는 것
+- 픽셀 단위로 구분하도록 학습 ex) 픽셀1은 하늘, 픽셀 200은 산, ... 
+- 
 
 #### (3) Image Captioning
 
@@ -1791,7 +1812,16 @@ model.evaluate_generator: test_generator
 
 
 
+
+
 ## 7. Recurrent Neural Network
+
+- 시계열(time series)
+- 
+
+
+
+
 
 
 
