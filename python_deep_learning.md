@@ -1329,7 +1329,13 @@ Deep Learning 모델은 1차원만 받을 수 있고, Input은 2차원인데 어
 >
 > 이렇게 연산하므로써 얻어지는 이점은 무엇인가?
 >
-> 
+> CNN은 이미지에만 쓰이는 것은 아니다. 
+>
+> 음성, 자연어에도 사용됨
+
+
+
+
 
 ### 1) 합성곱(Convolutional) 신경망 알고리즘
 
@@ -1577,6 +1583,8 @@ model.evaluate_generator: test_generator
 > 노란책 p.193
 >
 > 빨간책 p.134, 노란책 p.312
+>
+> SMOTE와 목적이 비슷(적은 데이터를 증폭시킴)
 
 - Overfitting을 회피하기 위해 더 많은 데이터를 생성하여 사용
 - 원본이미지를 여러가지 다른 형태로 만듦
@@ -1704,6 +1712,79 @@ model.evaluate_generator: test_generator
 
 > 노란책 p. 225
 
+
+
+
+
+- CNN으로 우리가 보는 것은 Image Processing (다른 분야에 써도 상관없지만)
+- Transfer
+  1. Layer 구조만 가져와서 파라미터는 새로 학습
+     - 시간이 오래걸림
+  2. Fine Tuning 방식: 학습된 파라미터의 일부만 재학습
+  3. Feature Extraction: 파라미터를 그대로 가져와서 사용
+     - Layer를 통과시켜 특징 맵만 뽑아냄
+     - 잘 쓰이지는 않음
+
+
+
+프로젝트 시) 다양한 것을 시도하다가, transfer learning 을 선택하게 되었다. 는 스토리텔링이 필요할 것
+
+
+
+- 자연어: 이미지처럼 간단하게 transfer 할 수 없다
+- 갖다쓰는 게 안된다!
+- 
+
+
+
+
+
+강화학습의 기본 철학: 데이터 없이 학습한다
+
+- 데이터를 수집하면서 학습한다
+- 가상세계에서 데이터를 생성해가면서 학습한다
+- CPS가 구성되어야 가능하다
+- 이것이 digital transformation의 끝판왕...
+- 
+
+
+
+
+
+### 사전훈련된 모델 다루기
+
+> 빨간책 p.241
+
+
+
+- 텐서플로 허브
+
+
+
+
+
+만약 움직이는 이미지라면? 정확도와 속도 사이에서 고민해야할 것
+
+
+
+
+
+### 6) 추가적인 학습 
+
+#### (1) Object Detection
+
+- R-CNN : Region CNN
+- YOLO
+
+
+
+#### (2) Image Segmentation
+
+
+
+#### (3) Image Captioning
+
+- Image detection + natural language processing(LSTM)
 
 
 
