@@ -1811,21 +1811,213 @@ model.evaluate_generator: test_generator
 
 
 
-
-
-
 ## 7. Recurrent Neural Network
 
-- 시계열(time series)
-- 
+> - 시계열(time series)
+> - Recurrent: 순환/반복
+> - 지금까지는 Layer 단계에서 forward만 했지, 순환하는 것은 없었다
+> - 데이터만의 특징이 중요했음
+> - CNN: 누적될 수는 있겠지만, 앞의 내용이 뒤에 영향을 주지는 않는다. "기억이 전달되지 않는다"
+
+
+
+- 순차적으로 input이 들어오고, 데이터들 간 시간의 순서에 따른 관계가 있을 것이다
+
+  ex) 한 글자를 치면 다음 글자를 예측
+
+- 들어오는 순서에 따른 특징을 가지게 될 것이다! 
+
+- 시간순서, 앞뒤 순서에 따라 데이터를 처리
+
+
+
+- sketch_rnn_demo
+- 사진을 rnn으로 처리할 수도 있지만, 성능이 좋아지기는 어렵다
+- 그러나 영상이라면 달라질 수 있다 (앞에서 뭘 했는지 알아야 뒤에서 뭘 할지 예측하기 쉬우므로)
+- 언어도 비슷한 원리 (최근은 자연어처리에 rnn을 쓰지는 않는다)
+
+
+
+- 앞쪽의 특징이 뒤에도 영향을 주는 데이터
+
+
+
+#### Feed-forward Neural Network와의 차이점
+
+- 1) 전 단계의 기억(Short-Term Memory)을 가지고 동작
+  - 1) 이전 단계의 output
+  - 직전 단계의 기억만 들어가는 것
+
+- ex)
+
+  - Input: [[1] , [2] , [3] , [4] , [5]]
+  - node에는 activation을 tanh를 한다 (-1 ~ 1 사이): output (-1 ~ 1 사이값)으로 나감
+  - [2]가 들어갈 때, [1]이 들어와서 같이 처리가 됨
+    -  [1]
+    - 첫번째 단계에서 처리된 결과 + [2]
+    - 두번째 단계에서 처리된 결과 + [3] 
+  - hidden layer가 하나지만, 5개인 것처럼 느껴짐
+  - input 사이즈에 따라 반복하는 것처럼 보임
+
+  - hidden layer를 여러 개 만들 수도 있다. 쌓는다고 한다 (stacked RNN) 
+
+
+
+- 심플하게 만들어져있음 (그래서 문제가 생김)
 
 
 
 
 
+#### DNN과 CNN신경망
+
+- hidden layer 가 2개 이상
+
+- 각 Layer간의 상태를 기억하지 않고 입력과 출력이 독립적으로 처리
+- 각 Layer마다 독립적으로 가중치(Weight)를 학습
 
 
-## 8. Long Short-Term Memory
+
+#### 순환신경망: 내부에 루프가 존재하는 신경망
+
+- 구조상으로는 hidden layer가 하나밖에 없는 deep learning 모델
+  - hidden layer가 하나면 mlp, 여러개면 deep learning
+
+- 은닉층(Hidden Layer)의 출력이 계속 순환하면서 입력값과 함께 학습에 사용
+- 연속적(Sequence) 데이터 처리를 위해서는 이전 단계의 정보가 필요
+- 학습 단계에서 1) 모든 Layer가 같은 가중치를 **공유**
+  - 1) 실제 Hidden Layer는 1개, 같은 파라미터를 공유해서 사용함
+  - 실제로 w이 한개... 계속 누적해서 학습시킴
+  - 파라미터의 개수는 적으나 학습시간이 짧지는 않다
+
+- 순환신경망의 형태
+  - one to one: 이미지 분류
+  - one to many: 이미지 설명 문장 (이미지 -> "강아지" 가 "풀밭" 에서 "뛰고" 있어요)
+  - many to one: 여러개의 입력에 대한 감성 분석(긍정, 부정)
+    - "영화"가 "굉장히" "재미있어요" -> 긍정
+    - "영화"가 "엄청" "지루해요" -> 부정
+    - 단어가 몇개 들어올지는 모르지만
+  - many to may: 기계번역(영어문장 -> 한글문장)
+    - 단어의 개수나 길이가 달라질 수 있다
+
+
+
+---
+
+#### 기억해둘 것
+
+RNN은 Short-Term Memory를 가지고 동작하는데, 이것은 바로 직전 단계의 기억을 가지고 기억한다는 의미이다!
+
+(후에 문제가 됨)
+
+Long-term momery가 필요한 문제들도 있는데, short-term memory만 사용
+
+이것을 해결하기 위해 만든 것이 LSTM(Long Short-Term Memory)이다 
+
+---
+
+
+
+- 순차적인 정보를 처리하기 위한 모델
+
+  - 앞뒤순서(상호관계)가 존재하는 시계열 데이터
+
+  - 텍스트나 음성 데이터 처리(번역, 음성인식, 음악, 동영상)
+
+    - 최근에는 많이 사용하지 않는 추세
+
+    
+
+- ht <- tanh(Wx * Xt + Wh * ht-1 + b)
+
+  - single layer가 반복
+  - Sequence Data 처리에 적합
+
+- Issues
+
+  - Long-Term Dependency: 입력이 깊어지면(문장이 길어지면) 처음 들어온 것의 기억이 소멸됨
+  - BPTT(Back-Propagation Through Time)
+    - time: 입력의 길이
+    - time이 길어지면, 많이 반복하는 거라 layer가 깊어지는 현상 발생
+    - hidden layer가 깊어지는 현상으로 **vanishing gradient** 현상이 발생하게 됨
+
+
+
+- LSTM이 나오게 된 이유
+
+
+
+- sequence-to-sequence 모델도 나타나게 된다
+
+
+
+
+
+## 8. Long Short-Term Memoy
+
+> 장기, 단기를 모두 가지고 있다
+>
+> - Long-Term Memory: 장기기억
+> - Short-Term Memory: 단기기억
+
+
+
+- 수식이 상당히 복잡하다
+- 이것을 개선하기 위해 GRU가 등장했지만 심플하다보니 성능이 좋지않아서, LSTM이 더 많이 쓰인다
+
+
+
+- 기존 RNN에 Long-Term Memory(Memory Cell) 구조 추가
+  - Long-Term Dependency Issue 해결
+  - Vanishing Gradient 및 Exploding Gradient Issue(발산) 해결
+
+
+
+#### Gate 구조
+
+> 수식이 복잡해 보이지만, W, b는 모두 파라미터
+>
+> 이것들을 지우고 생각해보면, Xt(=input)과 ht-1(=단기기억)만 남는다
+>
+> 단기기억을 누적시켜서 장기기억 형태로 만들어 나간다
+>
+> 복잡해 보이지만 sigmoid(0 ~ 1)와 tanh(-1 ~ 1)만 있는 형태
+
+
+
+1. Input 게이트
+2. Output 게이트
+3. **Forget 게이트**
+   - 기억을 잊게 만드는 게이트
+
+
+
+- RNN에서는 tanh만 썼지만, LSTM은 sigmoid 3개, tanh 2개로 구성
+
+
+
+- 직전단계 Output: O(t-1)
+- LSTM은 O(t-1)뿐만 아니라 계속 연결되는 무언가가 하나 더 있다 (Long-Term Memory, **Memory Cell**)
+- 곱해주기 전 모두 sigmoid 연산을 한다 (0~1 사이 값을 곱해준다): 기존에 가지고 있던 정보를 몇 퍼센트 정도 남길 것인가?를 의미(비율)
+
+
+
+- y_hat과 y의 오차가 줄어드는 데 얼마나 기여하는지(중요한 정보인지)는 tanh로 연산함
+
+
+
+
+
+#### tanh() vs. sigmoid()
+
+- tanh(): -1 ~ 1
+  - 정보의 **강약** 정도(sigmoid 보다 tanh가 성능이 좋으므로 선택한 것)
+  - 다음 단계에서 **얼마나 중요한가**를 조정
+- sigmoid(): 0 ~ 1
+  - 정보의 반영 비율
+  - 다음 단계에 **얼마나 반영할지**를 조정 (얼마나 남기고, 얼마나 버릴까(forget)를 결정)
+
+
 
 
 
