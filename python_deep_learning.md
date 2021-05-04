@@ -3302,3 +3302,54 @@ p.258-259
 
 
 
+
+
+## Reinforcement Learning (강화학습)
+
+> 빨간책 p.389
+
+
+
+- 기계학습의 한 영역(시도 오차 보정 학습)
+  - Trial and Error Learning(시도 오차 보정 학습)
+- 주어진 Environment 안에서 정의된 Agent가 현재의 State를 인식
+  - 행동(Action)의 주체: Agent
+  - 행동(Action)
+
+
+
+- 선택 가능한 행동 중 보상을 최대화하는 행동 또는 순서를 선택하는 방식
+  - Environment  -  Agent
+    1. State 제공
+    2. Agent가 Action
+    3. New State + Reward
+
+
+
+
+
+- 가상환경을 만들어야 한다
+- 
+
+- 행동에 대한 보상을 정교하게 설계해야 함
+
+- 예) 
+
+
+
+### Frozen Lake
+
+- Action, State, Reward
+
+
+
+---
+
+가상환경을 보다 자유롭게 사용할 수 있는 날이 오면,
+
+강화학습도 크게 발전할 것이다
+
+현재는 실제로 하기에 매우 비용이 큰 분야(로켓, 로봇 등)를 가상환경을 만들어 훈련하는 수준
+
+---
+
